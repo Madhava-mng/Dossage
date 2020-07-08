@@ -1,5 +1,5 @@
 # Dossage
-Doss attack
+Dos attack
 ***
 ## installation:
           git clone https://github.com/Black-widow-z/Dossage.git
